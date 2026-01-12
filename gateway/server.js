@@ -3,6 +3,7 @@ const { createProxyMiddleware } = require('http-proxy-middleware');
 const rateLimit = require('express-rate-limit');
 
 const app = express();
+app.set('trust proxy', 1);
 
 // Prevent spamming the anonymous chat
 const limiter = rateLimit({
@@ -14,12 +15,13 @@ app.use(limiter);
 
 // Proxy WebSocket connections to the chat-service
 app.use('/socket.io', createProxyMiddleware({
-  target: 'http://chat-service:3001',
+  target: 'https://annonytalk-tech.onrender.com/',
   ws: true,
-  changeOrigin: true
+  changeOrigin: true,
+  secure: false
 }));
 
-app.listen(8080, () => {
+app.listen(process.env.PORT || 8080, () => {
   console.log('✅ Gateway running on port 8080');
 });
 

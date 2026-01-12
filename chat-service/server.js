@@ -30,7 +30,7 @@ async function start() {
     });
   });
 
-  httpServer.listen(3001, () => console.log('🚀 Chat Service on 3001'));
+  httpServer.listen(process.env.PORT || 8080, () => console.log('🚀 Chat Service on 3001'));
 }
 
 start();
