@@ -95,4 +95,4 @@ const styles = {
   inputArea: { padding: '20px', display: 'flex', gap: '10px', backgroundColor: '#050505' },
   inputField: { flex: 1, padding: '12px', backgroundColor: '#111', border: '1px solid #222', color: 'white', borderRadius: '4px', outline: 'none' },
   sendButton: { padding: '0 30px', backgroundColor: '#00fff9', color: '#000', border: 'none', borderRadius: '4px', fontWeight: 'bold', cursor: 'pointer' }
-};s
+};
