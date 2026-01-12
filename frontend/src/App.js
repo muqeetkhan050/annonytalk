@@ -1,82 +1,11 @@
 
-// import React, { useState, useEffect, useRef } from 'react';
-// import io from 'socket.io-client';
-
-// // Connect to the Gateway (Port 8080)
-// const socket = io('http://localhost:8080', {
-//   transports: ['websocket']
-// });
-
-// function App() {
-//   const [messages, setMessages] = useState([]);
-//   const [input, setInput] = useState('');
-//   const scrollRef = useRef();
-
-//   useEffect(() => {
-//     socket.on('receive_message', (data) => {
-//       setMessages((prev) => [...prev, data]);
-//     });
-
-//     return () => socket.off('receive_message');
-//   }, []);
-
-//   // Auto-scroll logic
-//   useEffect(() => {
-//     scrollRef.current?.scrollIntoView({ behavior: 'smooth' });
-//   }, [messages]);
-
-//   const sendMessage = (e) => {
-//     e.preventDefault();
-//     if (input.trim()) {
-//       socket.emit('send_message', { text: input });
-//       setInput('');
-//     }
-//   };
-
-//   return (
-//     <div style={styles.container}>
-//       <div style={styles.chatBox}>
-//         {messages.map((msg, i) => (
-//           <div key={i} style={styles.message}>
-//             <strong style={{ color: '#007bff' }}>{msg.sender}: </strong>
-//             <span>{msg.text}</span>
-//             <small style={styles.time}>{msg.time}</small>
-//           </div>
-//         ))}
-//         <div ref={scrollRef} />
-//       </div>
-
-//       <form onSubmit={sendMessage} style={styles.form}>
-//         <input
-//           style={styles.input}
-//           value={input}
-//           onChange={(e) => setInput(e.target.value)}
-//           placeholder="Type a message..."
-//         />
-//         <button type="submit" style={styles.button}>Send</button>
-//       </form>
-//     </div>
-//   );
-// }
-
-// const styles = {
-//   container: { height: '100vh', display: 'flex', flexDirection: 'column', background: '#f0f2f5', padding: '20px' },
-//   chatBox: { flex: 1, overflowY: 'auto', background: '#fff', borderRadius: '8px', padding: '15px', marginBottom: '10px', boxShadow: '0 2px 5px rgba(0,0,0,0.1)' },
-//   message: { marginBottom: '10px', padding: '8px', borderBottom: '1px solid #eee' },
-//   time: { display: 'block', fontSize: '10px', color: '#999' },
-//   form: { display: 'flex', gap: '10px' },
-//   input: { flex: 1, padding: '10px', borderRadius: '4px', border: '1px solid #ccc' },
-//   button: { padding: '10px 20px', background: '#007bff', color: '#fff', border: 'none', borderRadius: '4px', cursor: 'pointer' }
-// };
-
-// export default App;
 
 
 import React, { useState, useEffect, useRef } from 'react';
 import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-router-dom';
 import io from 'socket.io-client';
 
-const socket = io('http://localhost:8080', { transports: ['websocket'] });
+const socket = io(process.env.REACT_APP_SOCKET_URL, { transports: ['websocket'] });
 
 const LandingPage = () => {
   const navigate = useNavigate();
@@ -166,4 +95,4 @@ const styles = {
   inputArea: { padding: '20px', display: 'flex', gap: '10px', backgroundColor: '#050505' },
   inputField: { flex: 1, padding: '12px', backgroundColor: '#111', border: '1px solid #222', color: 'white', borderRadius: '4px', outline: 'none' },
   sendButton: { padding: '0 30px', backgroundColor: '#00fff9', color: '#000', border: 'none', borderRadius: '4px', fontWeight: 'bold', cursor: 'pointer' }
-};
+};s
