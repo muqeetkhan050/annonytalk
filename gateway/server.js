@@ -15,7 +15,7 @@ app.use(limiter);
 
 // Proxy WebSocket connections to the chat-service
 app.use('/socket.io', createProxyMiddleware({
-  target: 'https://annonytalk-tech.onrender.com/',
+  target: process.env.CHAT_SERVICE_URL,
   ws: true,
   changeOrigin: true,
   secure: false
