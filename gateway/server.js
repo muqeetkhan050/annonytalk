@@ -26,7 +26,7 @@ const socketProxy = createProxyMiddleware({
   secure: false
 });
 app.use("/socket.io", socketProxy);
-server.on("upgrade", socketProxy.upgrade);
+
 
 
 // Create raw HTTP server
