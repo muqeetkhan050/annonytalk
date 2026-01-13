@@ -2,9 +2,14 @@
 import React, { useState, useEffect, useRef } from "react";
 import io from "socket.io-client";
 
-const socket = io(process.env.REACT_APP_SOCKET_URL, {
-  transports: ["websocket"],
-});
+// const socket = io(process.env.REACT_APP_SOCKET_URL, {
+//   transports: ["websocket"],
+// });
+
+const SOCKET_URL = process.env.REACT_APP_SOCKET_URL || "https://annonytalk.onrender.com";
+console.log("🚀 Using socket URL:", SOCKET_URL);
+const socket = io(SOCKET_URL, { transports: ['websocket'] });
+
 
 export default function App() {
   const [messages, setMessages] = useState([]);
