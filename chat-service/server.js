@@ -1,5 +1,7 @@
 
+
 // const express = require("express");
+
 // const http = require("http");
 // const { Server } = require("socket.io");
 // const { createClient } = require("redis");
@@ -15,28 +17,37 @@
 
 // app.use(express.json());
 
-// // ---------------------
 // // MongoDB
-// // ---------------------
 // const mongoUrl = process.env.MONGO_URL;
 
 // mongoose.connect(mongoUrl)
 //   .then(() => console.log("✅ MongoDB connected"))
 //   .catch(err => console.error("❌ Mongo error:", err));
 
-
-
 // const messageSchema = new mongoose.Schema({
 //   text: String,
 //   sender: String,
 //   time: String
-// });
+// }, { timestamps: true }); // Add timestamps for sorting
 
 // const Message = mongoose.model("Message", messageSchema);
 
-// // ---------------------
+// // 🆕 ADD THIS: REST endpoint to fetch message history
+// app.get("/messages", async (req, res) => {
+//   try {
+//     const messages = await Message.find()
+//       .sort({ createdAt: -1 }) // newest first
+//       .limit(100) // last 100 messages
+//       .lean();
+    
+//     res.json(messages.reverse()); // reverse to show oldest first
+//   } catch (err) {
+//     console.error("Error fetching messages:", err);
+//     res.status(500).json({ error: "Failed to fetch messages" });
+//   }
+// });
+
 // // Redis Adapter
-// // ---------------------
 // const pubClient = createClient({ url: process.env.REDIS_URL });
 // const subClient = pubClient.duplicate();
 
@@ -54,7 +65,7 @@
 //     socket.on("send_message", async (data) => {
 //       console.log("💬", data.text);
 
-//       await Message.create({
+//       const newMessage = await Message.create({
 //         text: data.text,
 //         sender: username,
 //         time: new Date().toLocaleTimeString()
@@ -73,7 +84,7 @@
 //   });
 
 //   server.listen(process.env.PORT, () => {
-//     console.log("🚀 Chat service running");
+//     console.log("🚀 Chat service running on port", process.env.PORT);
 //   });
 // }
 
@@ -83,6 +94,7 @@
 
 const express = require("express");
 const http = require("http");
+const cors = require("cors"); // 🔥 ADD THIS
 const { Server } = require("socket.io");
 const { createClient } = require("redis");
 const { createAdapter } = require("@socket.io/redis-adapter");
@@ -94,6 +106,13 @@ const server = http.createServer(app);
 const io = new Server(server, {
   cors: { origin: "*" }
 });
+
+// 🔥 ADD CORS MIDDLEWARE FOR REST API
+app.use(cors({
+  origin: "*",
+  methods: ["GET", "POST", "OPTIONS"],
+  credentials: true
+}));
 
 app.use(express.json());
 
@@ -108,19 +127,21 @@ const messageSchema = new mongoose.Schema({
   text: String,
   sender: String,
   time: String
-}, { timestamps: true }); // Add timestamps for sorting
+}, { timestamps: true });
 
 const Message = mongoose.model("Message", messageSchema);
 
-// 🆕 ADD THIS: REST endpoint to fetch message history
+// GET messages endpoint
 app.get("/messages", async (req, res) => {
   try {
+    console.log("📥 Fetching messages...");
     const messages = await Message.find()
-      .sort({ createdAt: -1 }) // newest first
-      .limit(100) // last 100 messages
+      .sort({ createdAt: -1 })
+      .limit(100)
       .lean();
     
-    res.json(messages.reverse()); // reverse to show oldest first
+    console.log("📤 Sending", messages.length, "messages");
+    res.json(messages.reverse());
   } catch (err) {
     console.error("Error fetching messages:", err);
     res.status(500).json({ error: "Failed to fetch messages" });
@@ -145,7 +166,7 @@ async function start() {
     socket.on("send_message", async (data) => {
       console.log("💬", data.text);
 
-      const newMessage = await Message.create({
+      await Message.create({
         text: data.text,
         sender: username,
         time: new Date().toLocaleTimeString()
@@ -163,8 +184,8 @@ async function start() {
     });
   });
 
-  server.listen(process.env.PORT, () => {
-    console.log("🚀 Chat service running on port", process.env.PORT);
+  server.listen(process.env.PORT || 3001, () => {
+    console.log("🚀 Chat service running on port", process.env.PORT || 3001);
   });
 }
 
